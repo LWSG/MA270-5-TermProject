@@ -1,7 +1,7 @@
 ﻿#include"CalcN.h"
 constexpr auto MaxLength = 100;
 const double Accuracy = 0.001;
-
+constexpr auto nummm = 28;
 using namespace std;
 
 void Mswitch(vector<fraction>&, int, int, int);
@@ -14,7 +14,7 @@ void MHerimite(vector<fraction>&, int, int);
 //将矩阵化为hermite标准型
 void Det(vector<fraction>&, int, fraction&);
 //计算矩阵行列式
-void MSummit(const vector<fraction>&, vector<fraction>&, int m = 25, int n = 28);
+int MSummit(const vector<fraction>&, vector<fraction>&, int m = 25, int n = 28);
 fraction VMulti(const vector<fraction>&, const vector<fraction>&, int);
 int main()
 {
@@ -39,7 +39,7 @@ int main()
 		vector<fraction>* b;
 		b = new vector<fraction>(25 * 28);
 		vector<fraction>* c;
-		c = new vector<fraction>(25 * 3);
+		c = new vector<fraction>(25 * nummm);
 		switch (czn)
 		{
 		case 1:
@@ -65,8 +65,7 @@ int main()
 			break;
 		case 4:
 			Min(*b, x, 25, 28);
-			MSummit(*b, *c);
-			Mprint(*c, 25, 3);
+			Mprint(*c, 25, MSummit(*b, *c));
 			break;
 		}
 		delete a;
@@ -83,7 +82,6 @@ void Mswitch(vector<fraction>& a, int n, int i, int j)
 {
 	int l;
 	if (i != j) {
-#pragma omp parallel for
 		for (l = 0; l < n; ++l) {
 			auto m = a[n * i + l];
 			a[n * i + l] = a[n * j + l];
@@ -91,16 +89,14 @@ void Mswitch(vector<fraction>& a, int n, int i, int j)
 		}
 	}
 }
-
 void MHStep1(vector<fraction>& a, int n, int l, int x)
 {
 	int i;
 	fraction m = a[l * n + x];
-
-#pragma omp parallel for
-	for (i = x; i < n; ++i) {
-		a[l * n + i] = a[l * n + i] / m;
-	}
+		for (i = x; i < n; ++i) {
+			a[l * n + i] = a[l * n + i] / m;
+		}
+	
 }
 void MHStep2(vector<fraction>& a, int m, int n, int l, int x, bool w)
 {
@@ -108,12 +104,10 @@ void MHStep2(vector<fraction>& a, int m, int n, int l, int x, bool w)
 	fraction p;
 	if (!w) {
 	auto* t = &a;
-#pragma omp parallel for
 		for (i = 0; i < m; ++i) {
 			if (i != l) {
 				p = a[i * n + x] / (*t)[l * n + x];
-				for (j = x; j < n; ++j) {
-					
+				for (j = x; j < n; ++j) {	
 					a[i * n + j] = a[i * n + j] - (*t)[l * n + j] * p;
 //					a[i * n + j] = a[i * n + j] - a[l * n + j] * p;
 				}
@@ -123,7 +117,6 @@ void MHStep2(vector<fraction>& a, int m, int n, int l, int x, bool w)
 		cout << endl;
 	}
 	if (w) {
-#pragma omp parallel for
 		for (i = l; i < m; ++i) {
 			if (i != l) {
 				p = a[i * n + x] / a[l * n + x];
@@ -137,7 +130,6 @@ void MHStep2(vector<fraction>& a, int m, int n, int l, int x, bool w)
 	}
 
 }
-
 void MHerimite(vector<fraction>& a, int m, int n) {
 	int i1, i2, flag, flag_x(0);
 	signN zero;
@@ -163,7 +155,6 @@ void MHerimite(vector<fraction>& a, int m, int n) {
 		++flag_x;
 	}
 }
-
 void Det(vector<fraction>& a, int m, fraction& D) {
 	int i1, i2, flag, flag_x(0), n(m);
 	signN zero;
@@ -191,15 +182,15 @@ void Det(vector<fraction>& a, int m, fraction& D) {
 		++flag_x;
 	}
 	for (int i = 0; i < n; ++i) {
-		D.nume = D.nume * a[i * n + i].nume;
-		D.den = D.den * a[i * n + i].den;
-		D.sign = D.sign==a[i * n + i].sign;
+		D.nume = D.nume * a[static_cast<std::vector<fraction, std::allocator<fraction>>::size_type>(i) * n + i].nume;
+		D.den = D.den * a[static_cast<std::vector<fraction, std::allocator<fraction>>::size_type>(i) * n + i].den;
+		D.sign = D.sign==a[static_cast<std::vector<fraction, std::allocator<fraction>>::size_type>(i) * n + i].sign;
 		cout << "DONE" << endl;
 	}
 	D.nume.sign = D.sign;
 	D.ref();
 }
-void MSummit(const vector<fraction>& b, vector<fraction>& c, int m, int n) {
+int MSummit(const vector<fraction>& b, vector<fraction>& c, int m, int n) {
 	/*vector<fraction> tb = b;
 
 	signN e({ 1 });
@@ -218,16 +209,16 @@ void MSummit(const vector<fraction>& b, vector<fraction>& c, int m, int n) {
 
 		}
 	}*/
-	vector<vector<fraction>>p(3);
+	vector<vector<fraction>>p(nummm);
 
-	for (decltype(p.size()) i = 0; i + 25 < n; ++i) {
+	for (decltype(p.size()) i = 0; i + 28- nummm < n; ++i) {
 		for (decltype(p.size()) j = 0; j < m; ++j) {
-			p[i].push_back(b[j * n + i + 25]);
+			p[i].push_back(b[j * n + i ]);
 		}
 	}
-	fraction(*q)[3] = new fraction[3][3];
+	fraction(*q)[nummm] = new fraction[nummm][nummm];
 
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < nummm; ++i) {
 		int j;
 		for (j = 0; j < i; ++j) {
 			q[i][j] = VMulti(p[i], p[j], m) / VMulti(p[j], p[j], m);
@@ -238,17 +229,22 @@ void MSummit(const vector<fraction>& b, vector<fraction>& c, int m, int n) {
 			}
 		}
 	}
-	for (int i = 0; i < 3; ++i) {
+	int rs = 0;
+	for (int i = 0; i < nummm; ++i) {
 		auto temp = VMulti(p[i], p[i], 25);
-		temp.print();
-		cout <<"^-0.5"<< ' ';
+		if (temp.nume.N != vector<char>{0}) {
+			temp.print();
+			cout << "^-0.5" << ' ';
+			for (int j = 0; j < m; ++j) {
+				c[j * nummm + rs] = p[i][j];
+			}
+			++rs;
+
+		}
+		
 	}
 	cout << endl;
-	for (int i = 0; i < m; ++i) {
-		for (int j = 0; j < 3; ++j) {
-			c[i * 3 + j] = p[j][i];
-		}
-	}
+	return rs;
 }
 fraction VMulti(const vector<fraction>& a, const vector<fraction>& b, int n) {
 	fraction ans;

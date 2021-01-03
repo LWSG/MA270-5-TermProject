@@ -234,8 +234,6 @@ signN GcdN(const signN&a, const signN&b) {
         return GcdN(ta, tb);
     }
 }
-
-
 void Min(vector<fraction>& a, string x, int m, int n) {
     signN pb;
     //b.N.pop_back();
@@ -254,7 +252,7 @@ void Min(vector<fraction>& a, string x, int m, int n) {
         for (int k = 0, t = 0; k < d; ++k) {
             t = (j + k) / n;
             if (k + j >= m * n)break;
-            a[t * n + (j + k) % n].nume.N[0] = D.N[k];
+            a[static_cast<std::vector<fraction, std::allocator<fraction>>::size_type>(t) * n + (j + k) % n].nume.N[0] = D.N[k];
         }
         k += 1;
         j += d;
@@ -269,4 +267,167 @@ void Mprint(vector<fraction>a, int m, int n) {
         }
         cout << endl;
     }
+}
+
+bool signN:: operator>(const signN& b) const
+{
+    if (this->sign != b.sign) {
+        if (this->sign)return true;
+        if (b.sign)return false;
+    }
+    else {
+        if (this->sign) {
+            if ((this->N).size() == b.N.size())
+                return this->N > b.N;
+            else return (this->N).size() > b.N.size();
+        }
+        else {
+            if ((this->N).size() == b.N.size())
+                return this->N < b.N;
+            else return (this->N).size() < b.N.size();
+        }
+    }
+}
+bool signN:: operator==(const signN& b) const
+{
+    if (this->sign == b.sign) {
+        if (this->N == b.N) {
+            return true;
+        }
+    }
+    return false;
+}
+bool signN:: operator!=(const signN& b) const
+{
+    return !(*this == b);
+}
+bool signN:: operator<(const signN& b) const
+{
+    if (*this == b)return false;
+    return !(*this > b);
+}
+signN signN:: operator+(const signN& b) const
+{
+    signN a;
+    signN tb = b;
+    signN tt = *this;
+    if (this->sign == b.sign) {
+        a.N = PlusN(this->N, b.N);
+        a.sign = this->sign;
+        return a;
+    }
+    else {
+        if (this->sign) {
+            tb.sign = 1;
+            a = MinusN(*this, tb);
+        }
+        else {
+            tt.sign = 1;
+            a = MinusN(tt, tb);
+            a.sign = !a.sign;
+        }
+    }
+    return a;
+}
+signN signN:: operator-(const signN& b) const
+{
+    signN tb = b;
+    tb.sign = !b.sign;
+    return *this + tb;
+}
+signN signN:: operator*(const signN& b)const
+{
+    signN a;
+    vector<char>zero{ 0 };
+    a.N = MultiN(this->N, b.N);
+    if (this->sign != b.sign) {
+        a.sign = 0;
+    }
+    else a.sign = 1;
+    if (a.N == zero)a.sign = 1;
+    return a;
+}
+signN signN:: operator/(const signN& b) const
+{
+    signN a;
+    vector<char>zero{ 0 };
+    a.N = DvidN(this->N, b.N);
+    if (this->sign != b.sign) {
+        a.sign = 0;
+    }
+    if (a.N == zero)a.sign = 1;
+    return a;
+}
+signN signN:: operator/(int b) const
+{
+    signN a(*this);
+    vector<char>zero{ 0 };
+    int t(0);
+    for (int i = 0; i < a.N.size(); ++i) {
+        a.N[i] = (this->N[i] + t) / b;
+        t = (this->N[i] + t) % b * 10;
+    }
+    if (a.N[0] == 0) {
+        RevsN(a.N);
+        while (a.N[a.N.size() - 1] == 0)a.N.pop_back();
+        RevsN(a.N);
+    }
+    if (this->sign != (b >= 0)) {
+        a.sign = 0;
+    }
+    if (a.N == zero)a.sign = 1;
+    return a;
+}
+signN signN:: operator%(const signN& b)const
+{
+    signN a;
+    signN c(*this);
+    signN d(b);
+    vector<char>zero{ 0 };
+    c.sign = 1;
+    d.sign = 1;
+    auto t = *this / b;
+    a = *this - t * b;
+    if (a.N == zero)a.sign = 1;
+    return a;
+}
+signN signN::operator^(const signN& b)const {
+    if (!this->sign && !b.sign) {
+        cerr << "CalcN.h:line 133 Error type" << endl;
+    }
+    signN ans;
+    ans.N = { 1 };
+    signN i(ans);
+    signN e(ans);
+    vector<char>zero{ 0 };
+    if (b.N == zero) {
+        return ans;
+    }
+    while (i.N != b.N) {
+        ans = ans * *this;
+        i = i + e;
+    }
+    ans = ans * *this;
+    return ans;
+}
+signN signN::operator^(const int& b)const {
+    if (!this->sign && b < 0) {
+        cerr << "CalcN.h:line 133 Error type" << endl;
+    }
+    signN ans;
+    ans.N = { 1 };
+    int i = 1;
+    if (b == 0) {
+        return ans;
+    }
+    while (i != b) {
+        ans = ans * *this;
+        i = i + 1;
+    }
+    ans = ans * *this;
+    return ans;
+}
+bool signN::iseven(void) const{
+    if (this->N[this->N.size() - 1] % 2 == 0)return true;
+    else return false;
 }
