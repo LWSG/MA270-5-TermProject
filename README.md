@@ -1,6 +1,6 @@
 # MA270-5-TermProject
 
-My solution for Arith Cui 's term project
+My solution to Arith Cui 's term project
 
 The [task](LAProject.pdf) of the term project.
 
