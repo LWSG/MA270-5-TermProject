@@ -1,4 +1,7 @@
-#pragma once
+#ifndef calc_h
+#define calc_h
+
+
 #include <iostream>
 #include <string.h>
 #include<string>
@@ -17,22 +20,22 @@ vector<char> DvidN(vector<char>, vector<char>);
 vector<char> PowN(vector<char>, vector<char>);
 signN MinusN(const signN&, const signN&);
 signN GcdN(const signN&, const signN&);
-//Éú³É¾ØÕó
+//ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½
 void Min(vector<fraction>&, string, int, int);
-//Êä³ö¾ØÕó
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void Mprint(vector<fraction>, int, int);
 class signN {
 public:
-	//¹¹Ôìº¯Êý
+	//ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
 	signN(void) :sign(1), N(e) {}
 	signN(vector<char>N) :sign(1), N(N) {}
 	signN(bool a, vector<char>N) :sign(a), N(N) {}
-	//±È´óÐ¡
+	//ï¿½È´ï¿½Ð¡
 	bool operator>(const signN& b) const;
 	bool operator==(const signN& b) const;
 	bool operator!=(const signN& b) const;
 	bool operator<(const signN& b) const;
-	//¼Ó¼õ³Ë³ýÈ¡Ä£³Ë·½
+	//ï¿½Ó¼ï¿½ï¿½Ë³ï¿½È¡Ä£ï¿½Ë·ï¿½
 	signN operator+(const signN& b) const;
 	signN operator-(const signN& b) const;
 	signN operator*(const signN& b)const;
@@ -43,7 +46,7 @@ public:
 	signN operator^(const int& b)const;
 	bool iseven(void)const;
 
-	//³ÉÔ±º¯Êý
+	//ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½
 	bool sign;
 	vector<char>N;
 private:
@@ -52,14 +55,14 @@ private:
 class fraction {
 public:
 
-	//¹¹Ôìº¯Êý
+	//ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
 	fraction(void) : nume({ 0 }), den({ 1 }), sign(1) {}
 	fraction(vector<char>a, vector<char>b) : nume(a), den(b), sign(1) {}
 	fraction(bool sign, vector<char>a, vector<char>b) :sign(sign), nume(a), den(b) {}
 	fraction(signN a) :sign(a.sign), nume(a.N), den({ 1 }) {}
 	fraction(signN a, signN b) :sign(a.sign == b.sign), nume(a.N), den(b.N) {}
 
-	//´òÓ¡Êä³ö
+	//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½
 	void print() {
 		if (!sign)cout << '-';
 		for (auto i : nume.N) {
@@ -72,7 +75,7 @@ public:
 		}
 	}
 
-	//»¯¼òº¯Êý
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void ref() {
 		signN zero;
 		zero.N.push_back(0);
@@ -89,7 +92,7 @@ public:
 		nume.sign = 1;
 		den.sign = 1;
 	}
-	//¼Ó¼õ³Ë³ý
+	//ï¿½Ó¼ï¿½ï¿½Ë³ï¿½
 	fraction operator+(const fraction& b) const& {
 		fraction ans;
 		fraction templ=*this;
@@ -135,8 +138,10 @@ public:
 		return ans;
 	}
 
-	//³ÉÔ±º¯Êý
+	//ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½
 	bool sign;
 	signN nume;
 	signN den;
 };
+
+#endif

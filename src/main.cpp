@@ -1,4 +1,4 @@
-﻿#include"CalcN.h"
+﻿#include"../incl/calc.h"
 constexpr auto MaxLength = 100;
 const double Accuracy = 0.001;
 constexpr auto nummm = 28;

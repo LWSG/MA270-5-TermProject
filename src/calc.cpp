@@ -1,4 +1,4 @@
-#include"CalcN.h"
+#include"../incl/calc.h"
 
 void RevsN(vector<char>& D) {
     vector<char>E = D;
@@ -284,9 +284,9 @@ bool signN:: operator>(const signN& b) const
         else {
             if ((this->N).size() == b.N.size())
                 return this->N < b.N;
-            else return (this->N).size() < b.N.size();
         }
     }
+    return (this->N).size() < b.N.size();
 }
 bool signN:: operator==(const signN& b) const
 {
